@@ -1,0 +1,50 @@
+#!/bin/bash
+#
+# install http://code.google.com/p/amazon-simpledb-cli/
+# and http://developer.amazonwebservices.com/connect/entry.jspa?externalID=1136
+# WARNING: make sure to install the required packages of the second as well
+
+# specify location of X.509 certificates for the ec2 command line tools
+export EC2_KEY_DIR=/root/.ec2
+export EC2_PRIVATE_KEY=${EC2_KEY_DIR}/pk-4P54TBID4E42U5ZMMCIZWBVYXXN6U6J3.pem
+export EC2_CERT=${EC2_KEY_DIR}/cert-4P54TBID4E42U5ZMMCIZWBVYXXN6U6J3.pem
+export EC2_ACCESS_KEY='AKIAIGKECZXA7AEIJLMQ'
+export AWS_ACCESS_KEY_ID='AKIAIGKECZXA7AEIJLMQ'
+export EC2_SECRET_KEY='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'
+export AWS_SECRET_ACCESS_KEY='w2Y3dx82vcY1YSKbJY51GmfFQn3705ftW4uSBrHn'
+export EC2_USER_ID='457964863276'
+export EC2_HOME='/root/ec2-api-tools-1.3-53907'
+export JAVA_HOME='/usr'
+PATH=$PATH:$HOME/bin:$EC2_HOME/bin:/usr/local/bin
+
+region="us-east-1"
+
+# if called with a parameter that is accepted by 'date --date'
+# it creates a date based on that value. if it is empty we take
+# a default expiration of 24 hours
+offset=$1
+if [ "${offset}" == "" ]
+then
+    offset="24 hours"
+fi
+
+expiration=$(date -u --date="${offset}" +"%Y-%m-%d %H:%M:%S")
+if [ "$expiration" == "" ]
+then
+    exit 0
+fi
+
+vols=( "vol-c00177a9" )
+
+mountpoints=( "/var/www" )
+
+for ((i = 0; i < ${#vols[@]}; i++))
+do
+    xfs_freeze -f ${mountpoints[i]}
+    snapshot=($(ec2-create-snapshot ${vols[i]} --region $region))
+    xfs_freeze -u ${mountpoints[i]}
+
+    # now add an item to the SimpleDB domain 
+    # containing the snapshot id and its expiration
+    /usr/local/bin/simpledb put snapshot ${snapshot[1]} expires="${expiration}"
+done
