@@ -11,6 +11,7 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.SubscribeRequest;
 import com.amazonaws.services.sns.model.Topic;
+import com.nineapps.programmingec2.Constants;
 
 /**
  * Examples for Simple Notification Service in Chapter 4.
@@ -22,10 +23,9 @@ public class SNSExamples {
 
     public static void main(String[] args) {
 
-        // XXX CHANGE TO USE YOUR OWN CREDENTIALS
         // prepare the credentials
-        String accessKey = "AKIAIGKECZXA7AEIJLMQ";
-        String secretKey = "w2Y3dx82vcY1YSKbJY51GmfFQn3705ftW4uSBrHn";
+        String accessKey = Constants.ACCESS_KEY;
+        String secretKey = Constants.SECRET_KEY;
 
         // create the SNS service
         AmazonSNS snsService = new AmazonSNSClient(

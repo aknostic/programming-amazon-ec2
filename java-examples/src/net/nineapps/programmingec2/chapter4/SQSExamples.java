@@ -7,6 +7,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
+import com.nineapps.programmingec2.Constants;
 
 /**
  * Examples for Simple Queue Service in Chapter 4.
@@ -18,10 +19,9 @@ public class SQSExamples {
 
     public static void main(String[] args) {
 
-        // XXX CHANGE TO USE YOUR OWN CREDENTIALS
         // prepare the credentials
-        String accessKey = "AKIAIGKECZXA7AEIJLMQ";
-        String secretKey = "w2Y3dx82vcY1YSKbJY51GmfFQn3705ftW4uSBrHn";
+        String accessKey = Constants.ACCESS_KEY;
+        String secretKey = Constants.SECRET_KEY;
 
         // create the SQS service
         AmazonSQS sqsService = new AmazonSQSClient(

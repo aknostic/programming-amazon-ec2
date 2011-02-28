@@ -13,6 +13,7 @@ import com.amazonaws.services.simpledb.model.ListDomainsRequest;
 import com.amazonaws.services.simpledb.model.ListDomainsResult;
 import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
+import com.nineapps.programmingec2.Constants;
 
 /**
  * Examples for SimpleDB in Chapter 4.
@@ -24,16 +25,14 @@ public class SimpleDBExamples {
 
     public static void main(String[] args) {
 
-        // XXX CHANGE TO USE YOUR OWN CREDENTIALS
         // prepare the credentials
-        String accessKey = "AKIAIGKECZXA7AEIJLMQ";
-        String secretKey = "w2Y3dx82vcY1YSKbJY51GmfFQn3705ftW4uSBrHn";
+        String accessKey = Constants.ACCESS_KEY;
+        String secretKey = Constants.SECRET_KEY;
 
         // create the SimpleDB service
         AmazonSimpleDB sdbService = new AmazonSimpleDBClient(
             new BasicAWSCredentials(accessKey, secretKey));
 
-        // XXX SET TO THE PREFERRED REGION
         // set the endpoint for us-east-1 region
         sdbService.setEndpoint("https://sdb.amazonaws.com");
         
