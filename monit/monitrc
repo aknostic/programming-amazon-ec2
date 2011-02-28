@@ -1,0 +1,93 @@
+##
+##
+
+## check every minute
+set daemon 60
+set logfile syslog facility log_daemon
+
+## configure smtp server to send alerts by mail
+set mailserver smtp.gmail.com port 587 username "yourname@gmail.com" 
+    password "yourpassword" using tlsv1
+set alert monit-notifications@mailinator.com
+
+## Services
+
+  ## check number of processes in the run queue
+  check system www.recommendi.com
+    if loadavg (1min) > 4 then alert
+    if loadavg (5min) > 2 then alert
+    if memory usage > 70% then alert
+
+## MOUNTS  
+
+  ## check some key directories for permissions
+  ## and disk space
+  check filesystem root with path /dev/sda1
+    if failed permission 660 then alert
+    if failed uid root then alert
+    if failed gid disk then alert
+    if space usage > 80% for 5 times within 15 cycles then alert
+    if space usage > 99% then stop
+
+  check filesystem mnt with path /dev/sda2
+    if failed permission 660 then alert
+    if failed uid root then alert
+    if failed gid disk then alert
+    if space usage > 80% for 5 times within 15 cycles then alert
+    if space usage > 99% then stop
+
+  check filesystem www with path /dev/sdf
+    if failed permission 660 then alert
+    if failed uid root then alert
+    if failed gid disk then alert
+    if space usage > 80% for 5 times within 15 cycles then alert
+    if space usage > 99% then stop
+
+## PROCESSES
+
+  ## check that ssh executable has not been
+  ## altered and permissions are correct
+  check file ssh_bin with path /usr/bin/ssh
+    alert security@9apps.net on
+        {checksum, timestamp, permission, uid, gid}
+             with mail-format {subject: SSH Alaaarrm! on www.recommendi.com}
+    if failed checksum and
+       expect the sum b26174c7f4d2d7eebb68dbed3e2b884e then unmonitor
+    if failed permission 755 then unmonitor
+    if failed uid root then unmonitor
+    if failed gid root then unmonitor
+    group ssh
+
+  ## if we can't connect to port 22,
+  ## then restart the service
+  check process ssh with pidfile /var/run/sshd.pid
+    start program = "/etc/init.d/ssh start"
+    stop program  = "/etc/init.d/ssh stop"
+    if failed port 22 then restart
+    if 2 restarts within 3 cycles then timeout
+    depends ssh_bin
+    group ssh
+
+  ## check that the apache excutable has not been
+  ## altered and permissions are correct
+  check file apache2_bin with path /usr/sbin/apache2
+    alert security@9apps.net on
+        {checksum, timestamp, permission, uid, gid}
+             with mail-format {subject: Apache2 Alaaarrm! on www.recommendi.com}
+    if failed checksum and
+       expect the sum fb521a6d6da8350948ab64b01e3464c2 then unmonitor
+    if failed permission 755 then unmonitor
+    if failed uid root then unmonitor
+    if failed gid root then unmonitor
+    group www
+
+  ## if we can't connect to port 80 on localhost
+  ## then try restarting apache
+  check process apache with pidfile /var/run/apache2.pid
+    start "/etc/init.d/apache2 start"
+    stop  "/etc/init.d/apache2 stop"
+    if failed host localhost port 80 
+        protocol HTTP request "/" then restart
+    if 5 restarts within 5 cycles then timeout
+    depends on apache2_bin
+    group www
