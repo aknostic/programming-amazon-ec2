@@ -1,4 +1,4 @@
-package com.nineapps.programmingec2.chapter7;
+package net.nineapps.programmingec2.chapter7;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

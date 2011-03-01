@@ -1,4 +1,4 @@
-package com.nineapps.programmingec2.chapter7;
+package net.nineapps.programmingec2.chapter7;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
