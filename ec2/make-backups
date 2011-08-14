@@ -41,7 +41,7 @@ mountpoints=( "/var/www" )
 for ((i = 0; i < ${#vols[@]}; i++))
 do
     xfs_freeze -f ${mountpoints[i]}
-    snapshot=($(ec2-create-snapshot ${vols[i]} --region $region))
+    snapshot=($(ec2-create-snapshot ${vols[i]} --region $region --description "Backup of ${vols[i]} - expires ${expiration}"))
     xfs_freeze -u ${mountpoints[i]}
 
     # now add an item to the SimpleDB domain 
