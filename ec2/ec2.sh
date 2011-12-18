@@ -70,7 +70,7 @@ start() {
 
     if [ -e "$dev" ]; then
         if [ ! -d $mnt ]; then
-            mkdir $mnt
+            mkdir -p $mnt
         fi
 
         /bin/echo "Mounting Elastic Block Store Volumes."
@@ -111,3 +111,4 @@ case "$1" in
 esac
 
 exit 0
+
