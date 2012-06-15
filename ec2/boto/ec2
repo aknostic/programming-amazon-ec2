@@ -1,0 +1,65 @@
+#!/bin/bash
+
+ELASTIC_IP=79.125.7.52
+
+dir=/root
+
+prog=$(basename $0)
+logger="logger -t $prog"
+
+# Wait until networking is up on the EC2 instance.
+perl -MIO::Socket::INET -e '
+until(new IO::Socket::INET("169.254.169.254:80")){print"Waiting for network...\n";sleep 1}
+' | $logger
+
+#grep="/bin/grep"
+#regex='s/.*\:[ \t]*"\{0,1\}\([^,"]*\)"\{0,1\},\{0,1\}/\1/'
+#sed="/bin/sed '${regex}'"
+
+#credentials=`/usr/bin/curl --silent http://169.254.169.254/latest/meta-data/iam/security-credentials/api_cg-express`
+#export AWS_KEY=`eval "echo '${credentials}' | ${grep} '\"AccessKeyId\"' | ${sed}"`
+#export AWS_SECRET_KEY=`eval "echo '${credentials}' | ${grep} '\"SecretAccessKey\"' | ${sed}"`
+
+# start/stop functions for OS
+
+start() {
+
+  echo "Associating Elastic IP."
+
+  #python ${dir}/ec2_init.py ${AWS_KEY} ${AWS_SECRET_KEY} ${ELASTIC_IP} start
+  python ${dir}/ec2_init.py ${ELASTIC_IP} start
+
+}
+
+stop() {
+
+  echo "Disassociating Elastic IP."
+
+  #python ${dir}/ec2_init.py ${AWS_KEY} ${AWS_SECRET_KEY} ${ELASTIC_IP} stop
+  python ${dir}/ec2_init.py ${ELASTIC_IP} stop
+
+}
+
+
+case "$1" in
+    start)
+        start
+        ;;
+
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        sleep 5
+        start
+        ;;
+    *)
+        echo "Usage: $SELF {start|stop|restart}"
+        exit 1
+        ;;
+
+esac
+
+exit 0
+

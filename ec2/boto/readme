@@ -1,0 +1,2 @@
+ec2_init.py - boto script for associating and disassociating an Elastic IP to the current instance. It relies on the current IAM role to get the AWS credentials.
+ec2 - init.d script for calling the above python script when starting and stopping (booting and shutting down) the instance
